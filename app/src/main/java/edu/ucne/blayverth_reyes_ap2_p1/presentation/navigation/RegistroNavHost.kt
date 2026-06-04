@@ -14,12 +14,10 @@ import edu.ucne.blayverth_reyes_ap2_p1.presentation.borrame.list.BorrameListScre
 @Composable
 fun RegistroNavHost(
     navController: NavHostController = rememberNavController(),
-    innerPadding: PaddingValues
 ){
     NavHost(
         navController = navController,
-        startDestination = Screen.BorrameList,
-        modifier = Modifier.padding(innerPadding)
+        startDestination = Screen.BorrameList
     ){
         composable<Screen.BorrameList> {
             BorrameListScreen(

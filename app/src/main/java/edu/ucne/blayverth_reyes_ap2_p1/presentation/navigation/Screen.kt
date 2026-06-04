@@ -2,7 +2,7 @@ package edu.ucne.blayverth_reyes_ap2_p1.presentation.navigation
 
 import kotlinx.serialization.Serializable
 
-sealed class Screen {
+sealed class Screen{
     @Serializable
     data object BorrameList: Screen()
     @Serializable
