@@ -7,7 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import edu.ucne.blayverth_reyes_ap2_p1.data.borrame.local.BorrameDao
+import edu.ucne.blayverth_reyes_ap2_p1.data.amonestacion.local.AmonestacionDao
 import edu.ucne.blayverth_reyes_ap2_p1.data.database.RegistroDb
 import javax.inject.Singleton
 
@@ -26,7 +26,7 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideBorrameDao(database: RegistroDb): BorrameDao{
-        return database.borrameDao()
+    fun provideAmonestacionDao(database: RegistroDb): AmonestacionDao{
+        return database.amonestacionDao()
     }
 }

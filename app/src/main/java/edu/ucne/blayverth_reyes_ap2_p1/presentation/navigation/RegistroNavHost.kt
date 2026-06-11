@@ -1,15 +1,12 @@
 package edu.ucne.blayverth_reyes_ap2_p1.presentation.navigation
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import edu.ucne.blayverth_reyes_ap2_p1.presentation.borrame.form.BorrameFormScreen
-import edu.ucne.blayverth_reyes_ap2_p1.presentation.borrame.list.BorrameListScreen
+import edu.ucne.blayverth_reyes_ap2_p1.presentation.amonestacion.form.AmonestacionFormScreen
+import edu.ucne.blayverth_reyes_ap2_p1.presentation.amonestacion.list.AmonestacionListScreen
 
 @Composable
 fun RegistroNavHost(
@@ -17,20 +14,20 @@ fun RegistroNavHost(
 ){
     NavHost(
         navController = navController,
-        startDestination = Screen.BorrameList
+        startDestination = Screen.AmonestacionList
     ){
-        composable<Screen.BorrameList> {
-            BorrameListScreen(
-                onAddBorrame = {
-                    navController.navigate(Screen.BorrameForm())
+        composable<Screen.AmonestacionList> {
+            AmonestacionListScreen(
+                onAddAmonestacion = {
+                    navController.navigate(Screen.AmonestacionForm())
                 },
-                onEditBorrame = { id ->
-                    navController.navigate(Screen.BorrameForm(id))
+                onEditAmonestacion = { id ->
+                    navController.navigate(Screen.AmonestacionForm(id))
                 }
             )
         }
-        composable<Screen.BorrameForm> {
-            BorrameFormScreen(
+        composable<Screen.AmonestacionForm> {
+            AmonestacionFormScreen(
                 onBack = {navController.navigateUp()}
             )
         }

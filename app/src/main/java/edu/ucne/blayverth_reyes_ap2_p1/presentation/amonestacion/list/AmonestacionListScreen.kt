@@ -1,4 +1,4 @@
-package edu.ucne.blayverth_reyes_ap2_p1.presentation.borrame.list
+package edu.ucne.blayverth_reyes_ap2_p1.presentation.amonestacion.list
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,13 +12,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -26,22 +24,32 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import edu.ucne.blayverth_reyes_ap2_p1.domain.borrame.model.Borrame
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import edu.ucne.blayverth_reyes_ap2_p1.domain.amonestacion.model.Amonestacion
+import androidx.compose.foundation.lazy.items
 
 @Composable
-fun BorrameListScreen(
-    onAddBorrame: () -> Unit,
-    onEditBorrame: (Int) -> Unit
+fun AmonestacionListScreen(
+    viewModel: AmonestacionListViewModel = hiltViewModel(),
+    onAddAmonestacion: () -> Unit,
+    onEditAmonestacion: (Int) -> Unit
 ){
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
     ListBody(
-        onAddClick = onAddBorrame,
-        onEditClick = onEditBorrame
+        onAddClick = onAddAmonestacion,
+        onEditClick = onEditAmonestacion,
+        state = state,
+        onEvent = viewModel::onEvent
     )
 }
 
@@ -49,14 +57,23 @@ fun BorrameListScreen(
 @Composable
 fun ListBody(
     onAddClick: () -> Unit,
-    onEditClick: (Int) -> Unit
+    onEditClick: (Int) -> Unit,
+    state: AmonestacionListUiState,
+    onEvent: (AmonestacionListUiEvent) -> Unit
 ){
     val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(state.message) {
+        state.message?.let{ message ->
+            snackbarHostState.showSnackbar(message)
+            onEvent(AmonestacionListUiEvent.ClearMessage)
+        }
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Elementos") }
+                title = { Text("Amonestaciones") }
             )
         },
         snackbarHost = {SnackbarHost(snackbarHostState)},
@@ -75,12 +92,12 @@ fun ListBody(
         Box(
             modifier = Modifier.padding(padding).fillMaxSize()
         ){
-            if(false){
+            if(state.isLoading){
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center).testTag("Cargando")
                 )
             }else{
-                if(true){
+                if(state.amonestaciones.isEmpty()){
                     Text(
                         text = "No hay datos",
                         modifier = Modifier.align(Alignment.Center).testTag("Vacio"),
@@ -92,6 +109,15 @@ fun ListBody(
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
+                        items(
+                            items = state.amonestaciones,
+                            key = {it.amonestacionId}
+                        ){ amonestacion ->
+                            AmonestacionItem(
+                                amonestacion = amonestacion,
+                                onEdit = {onEditClick(amonestacion.amonestacionId)}
+                            )
+                        }
                     }
                 }
             }
@@ -100,12 +126,12 @@ fun ListBody(
 }
 
 @Composable
-fun BorrameItem(
-    borrame: Borrame,
+fun AmonestacionItem(
+    amonestacion: Amonestacion,
     onEdit: () -> Unit
 ){
     ElevatedCard(
-        modifier = Modifier.fillMaxWidth().clickable{onEdit()}.testTag("it_elemento")
+        modifier = Modifier.fillMaxWidth().clickable{onEdit()}.testTag("it_amonestacion")
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -115,8 +141,19 @@ fun BorrameItem(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = "",
+                    text = amonestacion.nombres,
                     style = MaterialTheme.typography.bodyLarge
+                )
+
+                Text(
+                    text = amonestacion.razon,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                Text(
+                    text = amonestacion.monto.toString(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         }
@@ -126,9 +163,11 @@ fun BorrameItem(
 
 @Preview
 @Composable
-private fun BorrameListBodyPreview(){
+private fun AmonestacionListBodyPreview(){
     ListBody(
         onAddClick = {},
-        onEditClick = {}
+        onEditClick = {},
+        state = AmonestacionListUiState(),
+        onEvent = {}
     )
 }
